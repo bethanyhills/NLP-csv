@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<HEAD>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</HEAD>
+{% extends "base.html" %}
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-
+{% block content %}
 <form method="POST" enctype="multipart/form-data" action="">
     {{ form.csrf_token }}
     {{ form.upload_file }}
     <input type="submit" value="Go">
 </form>
+{% endblock %}
