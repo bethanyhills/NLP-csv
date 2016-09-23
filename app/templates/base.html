@@ -8,15 +8,22 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     </HEAD>
         <body>
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul>
+            <div>Sentiment Analysis:
+                <a href="{{ url_for('upload_page') }}">Home</a>
+                    {% if g.user.is_authenticated %}
+                | <a href="{{ url_for('logout') }}">Logout</a>
+                {% endif %}
+            </div>
+            <hr>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+            <ul>
                 {% for message in messages %}
                     <li>{{ message }} </li>
                 {% endfor %}
-                </ul>
-              {% endif %}
-            {% endwith %}
-            {% block content %}{% endblock %}
+            </ul>
+                {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
         </body>
 </html>
