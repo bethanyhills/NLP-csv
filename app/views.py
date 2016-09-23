@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_required, login_user, logout_user, flash, current_user
 
-from .forms import UploadForm, LoginForm
+from .forms import UploadForm, LoginForm, RegistrationForm
 from .models import User
 from app import app, db, lm
 from upload import s3_upload
@@ -39,16 +39,35 @@ def login():
     by processing the form."""
     form = LoginForm()
     if g.user is not None and g.user.is_authenticated:
-        return redirect('/upload')
+        return redirect(url_for('upload_page'))
     if form.validate_on_submit():
-        user = User.query.filter_by(email = form.email.data).first_or_404()
-        session['remember_me'] = form.remember_me.data
-        login_user(user, remember=True)
-        user.authenticated = True
+        user = User.query.filter_by(email = form.email.data).first()
+        if user:
+            session['remember_me'] = form.remember_me.data
+            login_user(user, remember=True)
+            user.authenticated = True
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('upload_page'))
+        else:
+            return redirect(url_for('register'))
+    return render_template("login.html", form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if request.method == 'POST' and form.validate():
+        if User.query.filter_by(email = form.email.data).first():
+            flash('You have already registered. Please login.')
+            return redirect(url_for('login'))
+        user = User(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data,
+                    password=form.password.data)
         db.session.add(user)
         db.session.commit()
-        return redirect('/upload')
-    return render_template("login.html", form=form)
+        login_user(user)
+        flash('Thanks for registering')
+        return redirect(url_for('upload_page'))
+    return render_template('register.html', form=form)
 
 @app.route("/logout", methods=["GET"])
 @login_required

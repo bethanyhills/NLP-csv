@@ -4,9 +4,11 @@ from app import db
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    first_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64))
     email = db.Column(db.String(120), index=True, unique=True)
-    password = db.Column(db.String(64))
+    password = db.Column(db.String(10))
+    registered_on = db.Column(db.DateTime)
     authenticated = db.Column(db.Boolean, default=False)
 
 
