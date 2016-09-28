@@ -1,12 +1,12 @@
-import os
+import app
 import boto
 from boto.s3.key import Key
 
 def s3_upload(file):
     '''Uploads a file to s3 in the appropriate s3 bucket'''
     s3_connection = boto.connect_s3(
-        aws_access_key_id=os.environ["S3_KEY"],
-        aws_secret_access_key=os.environ["S3_SECRET"],
+        aws_access_key_id=app.config.from_envvar["S3_KEY"],
+        aws_secret_access_key=app.config.from_envvar["S3_SECRET"],
         calling_format='boto.s3.connection.OrdinaryCallingFormat',
     )
     bucket = s3_connection.get_bucket(os.environ["S3_BUCKET"])
